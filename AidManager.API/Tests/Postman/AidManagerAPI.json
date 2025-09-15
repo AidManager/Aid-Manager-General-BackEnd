@@ -1,0 +1,96 @@
+﻿{
+  "info": {
+    "_postman_id": "91de60dd-e45b-4e7f-adb2-8d206398ddbc",
+    "name": "AidManagerAPI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "31424849"
+  },
+  "item": [
+    {
+      "name": "PostEndpoints",
+      "item": [
+        {
+          "name": "DeletePostById",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5082/api/v1/posts/4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5082",
+              "path": [
+                "api",
+                "v1",
+                "posts",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetAllPosts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5082/api/v1/posts",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5082",
+              "path": [
+                "api",
+                "v1",
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CreatePost",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Nekito\",\r\n  \"description\": \"nekito-depresion\",\r\n  \"rating\": 3,\r\n  \"userId\": 21\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5082/api/v1/posts",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5082",
+              "path": [
+                "api",
+                "v1",
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetPostById",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+﻿[build]
+builder="dockerfile"
+dockerfilePath="AidManager.API/Dockerfile"
+
+[deploy]
+startupCommand="dotnet AidManager.API.dll"
