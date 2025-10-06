@@ -10,37 +10,63 @@ namespace AidManager.API.Payment.Infraestructure.Persistence.EFC.Repositories;
 public class PaymentDetailRepository : BaseRepository<PaymentDetail>, IPaymentDetailRepository
 {
     public PaymentDetailRepository(AppDBContext context) : base(context) {}
-    public Task<PaymentDetail> CreatePaymentDetail(PaymentDetail entity)
+
+    // Si tu interfaz exige este método, mantenlo pero en async y con guard de transacciones
+    public async Task<PaymentDetail?> CreatePaymentDetail(PaymentDetail entity)
     {
-        using (var transaction = Context.Database.BeginTransaction())
+        if (SupportsTransactions)
         {
+            await using var tx = await Context.Database.BeginTransactionAsync();
             try
             {
-                Context.Set<PaymentDetail>().Add(entity);
-                Context.SaveChanges();
-                transaction.Commit();
+                await Context.Set<PaymentDetail>().AddAsync(entity);
+                await Context.SaveChangesAsync();
+                await tx.CommitAsync();
                 Console.WriteLine("PaymentDetail created successfully");
-                return Task.FromResult(entity);
+                return entity;
             }
-            catch(Exception)
+            catch
             {
+                await tx.RollbackAsync();
                 Console.WriteLine("Error creating Payment detail");
-                transaction.Rollback();
+                return null;
             }
-
-            return Task.FromResult<PaymentDetail>(null);
+        }
+        else
+        {
+            // InMemory (sin transacción)
+            try
+            {
+                await Context.Set<PaymentDetail>().AddAsync(entity);
+                await Context.SaveChangesAsync();
+                Console.WriteLine("PaymentDetail created successfully (no-tx)");
+                return entity;
+            }
+            catch
+            {
+                Console.WriteLine("Error creating Payment detail (no-tx)");
+                return null;
+            }
         }
     }
 
-    public Task AddAsync(PaymentDetail entity)
+    // ⚠️ Este método en tu código original sombrea al AddAsync del base (firma distinta).
+    //   Mejor haz override para preservar la misma API y evitar confusiones.
+    public override Task<bool> AddAsync(PaymentDetail entity)
     {
         Console.WriteLine("adding PaymentDetail to repository");
         return base.AddAsync(entity);
     }
-    
+
+    // OJO: El nombre sugiere uno solo por Id; tu implementación devuelve lista.
+    // Si la interfaz realmente pide IEnumerable<PaymentDetail>, lo dejo igual,
+    // pero en async puro:
     public async Task<IEnumerable<PaymentDetail>> FindByIdAsync(int id)
     {
         Console.WriteLine("find by id in PaymentDetailRepository");
-        return await Context.Set<PaymentDetail>().Where(b => b.Id == id).ToListAsync();
+        return await Context
+            .Set<PaymentDetail>()
+            .Where(b => b.Id == id)
+            .ToListAsync();
     }
 }
