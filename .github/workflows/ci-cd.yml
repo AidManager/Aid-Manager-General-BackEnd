@@ -1,0 +1,24 @@
+name: AidManager CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, testing, pipeline-test]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - run: dotnet restore AidManager-BackEnd.sln
+
+      - run: dotnet build AidManager-BackEnd.sln --configuration Release --no-restore
+
+      - run: dotnet test AidManager-BackEnd.sln --configuration Release --no-build

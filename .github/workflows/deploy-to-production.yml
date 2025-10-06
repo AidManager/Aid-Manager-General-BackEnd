@@ -1,0 +1,28 @@
+name: AidManager Production Deployment
+
+on:
+  push:
+    branches: [pipeline-test] 
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - run: dotnet restore AidManager-BackEnd.sln
+
+      - run: dotnet build AidManager-BackEnd.sln --configuration Release --no-restore
+
+      - run: dotnet test AidManager-BackEnd.sln --configuration Release --no-build
+
+      - run: npm install -g railway
+
+      - run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+
+      - run: railway up --production
